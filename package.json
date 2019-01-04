@@ -10,6 +10,10 @@
   "jest": {
     "preset": "jest-expo"
   },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
   "dependencies": {
     "@expo/samples": "2.1.1",
     "expo": "^31.0.2",
@@ -19,7 +23,8 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
-    "jest-expo": "^31.0.0"
+    "jest-expo": "^31.0.0",
+    "prettier": "^1.15.3"
   },
   "private": true
 }
