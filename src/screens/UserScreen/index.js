@@ -12,11 +12,11 @@ import { Video, Permissions, ImagePicker } from 'expo';
 import { Image } from 'react-native-expo-image-cache';
 
 /* from app */
-import Avatar from 'app/src/components/Avatar';
-import FlatList from 'app/src/components/FlatList';
-import Text from 'app/src/components/Text';
-import GA from 'app/src/analytics';
-import I18n from 'app/src/i18n';
+import Avatar from 'src/components/Avatar';
+import FlatList from 'src/components/FlatList';
+import Text from 'src/components/Text';
+import GA from 'src/analytics';
+import I18n from 'src/i18n';
 import styles from './styles';
 
 @connect(state => ({
