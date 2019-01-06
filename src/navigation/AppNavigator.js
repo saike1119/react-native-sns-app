@@ -1,15 +1,15 @@
 import { createStackNavigator, NavigationActions } from 'react-navigation';
 
 /* screen */
-import MainTabNavigator from 'app/src/navigation/MainTabNavigator';
-import UserScreen from 'app/src/screens/UserScreen';
-import TagScreen from 'app/src/screens/TagScreen';
-import PostScreen from 'app/src/screens/PostScreen';
-import TakeScreen from 'app/src/screens/TakeScreen';
-import TakePublishScreen from 'app/src/screens/TakePublishScreen';
+import MainTabNavigator from 'src/navigation/MainTabNavigator';
+import UserScreen from 'src/screens/UserScreen';
+import TagScreen from 'src/screens/TagScreen';
+import PostScreen from 'src/screens/PostScreen';
+import TakeScreen from 'src/screens/TakeScreen';
+import TakePublishScreen from 'src/screens/TakePublishScreen';
 
 /* from app */
-import IconButton from 'app/src/components/IconButton';
+import IconButton from 'src/components/IconButton';
 
 const TakeStack = createStackNavigator(
   {

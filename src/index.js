@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import { StatusBar, Platform, View } from 'react-native';
 
 /* from app */
-import store from 'app/src/store';
-import AppWithNavigationState from 'app/src/navigation/RootNavigation';
+import store from 'src/store';
+import AppWithNavigationState from 'src/navigation/RootNavigation';
 
 const Navigation = () => (
   <View style={{ flex: 1 }}>

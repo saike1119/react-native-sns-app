@@ -1,4 +1,4 @@
-import AppNavigator from 'app/src/navigation/AppNavigator';
+import AppNavigator from 'src/navigation/AppNavigator';
 const initialState = null;
 
 export default (state = initialState, action) => {

@@ -2,10 +2,10 @@ import { Constants } from 'expo';
 import { createStackNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 /* from app */
-import HomeScreen from 'app/src/screens/HomeScreen';
-import SearchScreen from 'app/src/screens/SearchScreen';
-import NotificationScreen from 'app/src/screens/NotificationScreen';
-import UserScreen from 'app/src/screens/UserScreen';
+import HomeScreen from 'src/screens/HomeScreen';
+import SearchScreen from 'src/screens/SearchScreen';
+import NotificationScreen from 'src/screens/NotificationScreen';
+import UserScreen from 'src/screens/UserScreen';
 import {
   HomeTabIcon,
   SearchTabIcon,
@@ -13,7 +13,7 @@ import {
   NotificationTabIcon,
   MeTabIcon,
   TabBar,
-} from 'app/src/components/Tab';
+} from 'src/components/Tab';
 
 const createTabStack = (title, screen) =>
   createStackNavigator({

@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 
 /* from app */
-import AppNavigator from 'app/src/navigation/AppNavigator';
+import AppNavigator from 'src/navigation/AppNavigator';
 
 const App = reduxifyNavigator(AppNavigator, 'root');
 
