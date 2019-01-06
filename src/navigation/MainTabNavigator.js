@@ -2,7 +2,7 @@ import { Constants } from 'expo';
 import { createStackNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 /* from app */
-import HomeScreen from 'src/screens/HomeScreen';
+import HomeScreen from 'src/screens/HomeScreen/HomeScreen';
 import SearchScreen from 'src/screens/SearchScreen';
 import NotificationScreen from 'src/screens/NotificationScreen';
 import UserScreen from 'src/screens/UserScreen';
