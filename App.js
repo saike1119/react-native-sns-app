@@ -4,6 +4,7 @@ import { AppLoading, Font, Asset } from 'expo';
 import Navigation from 'src';
 import fonts from 'src/fonts';
 import images from 'src/images';
+import firebase from 'src/firebase';
 
 export default class App extends React.Component {
   static defaultprops = {
@@ -23,6 +24,7 @@ export default class App extends React.Component {
     await Font.loadAsync(fonts);
     return true;
   };
+  firebase;
 
   render() {
     const { isLoadingComplete } = this.state;
