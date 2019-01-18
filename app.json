@@ -24,6 +24,16 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "extra": {
+      "firebase": {
+        "apiKey": "AIzaSyDIXOpXzKFhA8SdtcBxcl2Y_ktcR6ECjMo",
+        "authDomain": "react-native-sns-app.firebaseapp.com",
+        "databaseURL": "https://react-native-sns-app.firebaseio.com",
+        "projectId": "react-native-sns-app",
+        "storageBucket": "react-native-sns-app.appspot.com",
+        "messagingSenderId": "44597503030"
+      }
     }
   }
 }
