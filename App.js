@@ -1,10 +1,10 @@
 import React from 'react';
 import { AppLoading, Font, Asset } from 'expo';
 /* from app */
-import Navigation from 'src';
-import fonts from 'src/fonts';
-import images from 'src/images';
-import firebase from 'src/firebase';
+import Navigation from 'app/src';
+import fonts from 'app/src/fonts';
+import images from 'app/src/images';
+import firebase from 'app/src/firebase';
 
 export default class App extends React.Component {
   static defaultprops = {
