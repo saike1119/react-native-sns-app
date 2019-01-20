@@ -15,4 +15,4 @@ const Navigation = () => (
   </View>
 );
 
-export default navigation;
+export default Navigation;
