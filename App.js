@@ -18,6 +18,8 @@ export default class App extends React.Component {
   }
 
   loadResourcesAsync = async () => {
+    /* firebase */
+    await firebase.init();
     /* asset */
     await Asset.loadAsync(Object.keys(images).map(key => images[key]));
     /* font */
@@ -27,10 +29,7 @@ export default class App extends React.Component {
   firebase;
 
   render() {
-    const { isLoadingComplete } = this.state;
-    const { skipLoadingScreen } = this.props;
-
-    if (!isLoadingComplete && !skipLoadingScreen) {
+    if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
         <AppLoading
           startAsync={this.loadResourcesAsync}
@@ -39,5 +38,6 @@ export default class App extends React.Component {
         />
       );
     }
+    return <Navigation />;
   }
 }
