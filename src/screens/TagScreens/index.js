@@ -11,10 +11,11 @@ import { Video } from 'expo';
 import { Image } from 'react-native-expo-image-cache';
 
 /* from app */
-import FlatList from 'src/components/FlatList';
-import Text from 'src/components/Text';
-import GA from 'src/analytics';
-import I18n from 'src/i18n';
+import FlatList from '/src/components/FlatList';
+import Text from '/src/components/Text';
+import firebase from '/src/firebase';
+import GA from '/src/analytics';
+import I18n from '/src/i18n';
 import styles from './styles';
 
 export default class UserScreen extends React.Component {
@@ -24,8 +25,10 @@ export default class UserScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     const { navigation } = this.props;
     const tag = navigation.getParam('tag', null);
+
     this.state = {
       tag,
       posts: [],
@@ -33,14 +36,58 @@ export default class UserScreen extends React.Component {
       fetching: false,
       loading: false,
     };
+
     GA.ScreenHit(`Tag/${tag}`);
   }
+
+  async componentDidMount() {
+    await this.getTagPosts();
+  }
+
   onThumbnailPress = item => {
     const { navigation } = this.props;
+
     navigation.push('Post', { pid: item.pid });
   };
+
+  getTagPosts = async (cursor = null) => {
+    const { tag } = this.state;
+
+    this.setState({ fetching: true });
+
+    const response = await firebase.getThumbnails({ tag }, cursor);
+
+    if (!response.error) {
+      const { posts } = this.state;
+
+      this.setState({
+        posts: cursor ? posts.concat(response.data) : response.data,
+        cursor: response.cursor,
+      });
+    }
+
+    this.setState({ fetching: false });
+  };
+
+  onRefresh = async () => {
+    this.setState({ cursor: null });
+
+    await this.getTagPosts();
+  };
+
+  onEndReached = async () => {
+    const { cursor, loading } = this.state;
+
+    if (!loading && cursor) {
+      this.setState({ loading: true });
+      await this.getTagPosts(cursor);
+      this.setState({ loading: false });
+    }
+  };
+
   render() {
     const { tag, posts, fetching, loading } = this.state;
+
     return (
       <View style={styles.container}>
         <FlatList
@@ -48,6 +95,11 @@ export default class UserScreen extends React.Component {
           numColumns={3}
           data={posts}
           keyExtractor={item => item.key}
+          refreshControl={
+            <RefreshControl refreshing={fetching} onRefresh={this.onRefresh} />
+          }
+          onEndReachedThreshold={0.1}
+          onEndReached={this.onEndReached}
           ListHeaderComponent={() => (
             <View style={styles.header}>
               <Text
@@ -60,10 +112,11 @@ export default class UserScreen extends React.Component {
             if (viewableItemIndices.indexOf(index) === -1) {
               return <View style={styles.file} />;
             }
+
             return (
               <TouchableOpacity onPress={() => this.onThumbnailPress(item)}>
                 {item.type === 'photo' && (
-                  <Image uri={item.thumbnail} s tyle={styles.file} />
+                  <Image uri={item.thumbnail} style={styles.file} />
                 )}
                 {item.type === 'movie' && (
                   <Video
@@ -84,7 +137,7 @@ export default class UserScreen extends React.Component {
               </View>
             ) : null
           }
-        />{' '}
+        />
       </View>
     );
   }

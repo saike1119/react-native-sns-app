@@ -8,15 +8,17 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Notifications, Video } from 'expo';
+
 /* node_modules */
 import { Image } from 'react-native-expo-image-cache';
 
 /* from app */
-import Avatar from 'src/components/Avatar';
-import FlatList from 'src/components/FlatList';
-import Text from 'src/components/Text';
-import GA from 'src/analytics';
-import I18n from 'src/i18n';
+import Avatar from '/src/components/Avatar';
+import FlatList from '/src/components/FlatList';
+import Text from '/src/components/Text';
+import firebase from '/src/firebase';
+import GA from '/src/analytics';
+import I18n from '/src/i18n';
 import styles from './styles';
 
 export default class NotificationScreen extends React.Component {
@@ -26,26 +28,76 @@ export default class NotificationScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       notifications: [],
       cursor: null,
       fetching: false,
       loading: false,
     };
+
     GA.ScreenHit('Notification');
   }
 
+  async componentDidMount() {
+    Notifications.setBadgeNumberAsync(0);
+
+    await this.getNotifications();
+  }
+
+  getNotifications = async (cursor = null) => {
+    this.setState({ fetching: true });
+
+    const response = await firebase.getNotifications(cursor);
+
+    if (!response.error) {
+      const { notifications } = this.state;
+
+      this.setState({
+        notifications: cursor
+          ? notifications.concat(response.data)
+          : response.data,
+        cursor: response.cursor,
+      });
+    } else {
+      console.log(response);
+      alert(response.error);
+    }
+
+    this.setState({ fetching: false });
+  };
+
+  onRefresh = async () => {
+    this.setState({ cursor: null });
+
+    await this.getNotifications();
+  };
+
+  onEndReached = async () => {
+    const { cursor, loading } = this.state;
+
+    if (!loading && cursor) {
+      this.setState({ loading: true });
+      await this.getNotifications(cursor);
+      this.setState({ loading: false });
+    }
+  };
+
   onUserPress = item => {
     const { navigation } = this.props;
+
     navigation.push('User', { uid: item.from.uid });
   };
+
   onFilePress = item => {
     const { navigation } = this.props;
+
     navigation.push('Post', { pid: item.post.pid });
   };
 
   render() {
     const { notifications, fetching, loading } = this.state;
+
     if (notifications.length === 0) {
       return (
         <ScrollView
@@ -58,6 +110,7 @@ export default class NotificationScreen extends React.Component {
         </ScrollView>
       );
     }
+
     return (
       <View style={styles.container}>
         <FlatList
@@ -66,8 +119,7 @@ export default class NotificationScreen extends React.Component {
           renderItem={({ item }) => (
             <TouchableHighlight
               style={styles.rowContainer}
-              underlayCol
-              or="rgba(0,0,0,0.1)"
+              underlayColor="rgba(0,0,0,0.1)"
               onPress={() => this.onFilePress(item)}
             >
               <View style={styles.row}>
@@ -109,7 +161,7 @@ export default class NotificationScreen extends React.Component {
               </View>
             ) : null
           }
-        />{' '}
+        />
       </View>
     );
   }

@@ -3,11 +3,12 @@ import { View, ScrollView, Image, Keyboard, Alert } from 'react-native';
 import { Video } from 'expo';
 
 /* from app */
-import IconButton from 'app/src/components/IconButton';
-import TextInput from 'app/src/components/TextInput';
-import GA from 'app/src/analytics';
-import I18n from 'app/src/i18n';
+import IconButton from '/src/components/IconButton';
+import TextInput from '/src/components/TextInput';
+import GA from '/src/analytics';
+import I18n from '/src/i18n';
 import styles from './styles';
+import firebase from '/src/firebase';
 
 export default class TakePublishScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -55,6 +56,13 @@ export default class TakePublishScreen extends React.Component {
         <IconButton name="ios-send-outline" onPress={this.onPublish} />
       ),
     });
+
+    const result = await firebase.createPost(
+      text,
+      mode === 'photo' ? photo : movie,
+      mode
+    );
+
     if (result.error) {
       Alert.alert(I18n.t('TakePublish.alert'), result.error);
     } else {

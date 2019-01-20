@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, TouchableHighlight } from 'react-native';
+import { View, TouchableHighlight, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 
 /* from app */
-import FlatList from 'src/components/FlatList';
-import Text from 'src/components/Text';
-import TextInput from 'src/components/TextInput';
-import GA from 'src/analytics';
-import I18n from 'src/i18n';
+import FlatList from '/src/components/FlatList';
+import Text from '/src/components/Text';
+import firebase from '/src/firebase';
+import GA from '/src/analytics';
+import I18n from '/src/i18n';
 import styles from './styles';
 
 export default class SearchScreen extends React.Component {
@@ -17,18 +17,39 @@ export default class SearchScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       keyword: null,
       tags: [],
       searching: false,
     };
+
     GA.ScreenHit('Search');
   }
 
+  getTags = async () => {
+    const { keyword } = this.state;
+
+    const response = await firebase.getTags(keyword.replace(/^#/, ''));
+
+    if (!response.error) {
+      this.setState({
+        tags: response,
+      });
+    }
+  };
+
   onChangeText = text => {
     clearTimeout(this.interval);
+
     this.setState({ keyword: text.replace(/^#/, ''), searching: true });
+
+    this.interval = setTimeout(async () => {
+      this.setState({ searching: false });
+      await this.getTags();
+    }, 1500);
   };
+
   onRowPress = item => {
     const { navigation } = this.props;
     navigation.push('Tag', { tag: `#${item.name}` });
@@ -36,6 +57,7 @@ export default class SearchScreen extends React.Component {
 
   render() {
     const { keyword, tags, searching } = this.state;
+
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
@@ -51,18 +73,18 @@ export default class SearchScreen extends React.Component {
                   underlineColorAndroid="transparent"
                   onChangeText={this.onChangeText}
                   clearButtonMode="while-editing"
-                />{' '}
+                />
               </View>
             }
             renderItem={({ item }) => {
               if (searching) {
                 return null;
               }
+
               return (
                 <TouchableHighlight
                   underlayColor="rgba(0,0,0,0.1)"
-                  sty
-                  le={styles.row}
+                  style={styles.row}
                   onPress={() => this.onRowPress(item)}
                 >
                   <Text font="noto-sans-medium" style={styles.rowText}>
@@ -79,7 +101,7 @@ export default class SearchScreen extends React.Component {
                 </Text>
               ) : null
             }
-          />{' '}
+          />
         </View>
       </SafeAreaView>
     );

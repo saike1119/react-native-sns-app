@@ -12,11 +12,12 @@ import { Video, Permissions, ImagePicker } from 'expo';
 import { Image } from 'react-native-expo-image-cache';
 
 /* from app */
-import Avatar from 'src/components/Avatar';
-import FlatList from 'src/components/FlatList';
-import Text from 'src/components/Text';
-import GA from 'src/analytics';
-import I18n from 'src/i18n';
+import Avatar from '/src/components/Avatar';
+import FlatList from '/src/components/FlatList';
+import Text from '/src/components/Text';
+import firebase from '/src/firebase';
+import GA from '/src/analytics';
+import I18n from '/src/i18n';
 import styles from './styles';
 
 @connect(state => ({
@@ -29,23 +30,29 @@ export default class UserScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
     const { me, navigation } = this.props;
     const uid = navigation.getParam('uid', me.uid);
+
     this.state = {
       self: me.uid === uid,
-      user: {},
+      user: {
+        uid: 1,
+        img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
+        name: 'User1',
+      },
       posts: [],
       cursor: null,
       fetching: false,
       loading: false,
     };
+
     GA.ScreenHit(me.uid === uid ? `User/${uid}` : 'Me');
   }
 
   async componentDidMount() {
     const { self } = this.state;
     const { me, navigation } = this.props;
+
     if (self) {
       await this.setState({ user: me });
       navigation.setParams({ title: I18n.t('User.self') });
@@ -64,6 +71,7 @@ export default class UserScreen extends React.Component {
   componentDidUpdate(prevProps) {
     const { self } = this.state;
     const { me } = this.props;
+
     if (prevProps.me !== me && self) {
       this.setState({ user: me });
     }
@@ -74,12 +82,15 @@ export default class UserScreen extends React.Component {
 
     const permissions = Permissions.CAMERA_ROLL;
     const { status } = await Permissions.askAsync(permissions);
+
     if (status) {
       const photo = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         aspect: [1, 1],
       });
+
       if (!photo.cancelled) {
+        const response = await firebase.changeUserImg(photo);
         if (!response.error) {
           dispatch({
             type: 'ME_SET',
@@ -89,13 +100,54 @@ export default class UserScreen extends React.Component {
       }
     }
   };
+
   onThumbnailPress = item => {
     const { navigation } = this.props;
+
     navigation.push('Post', { pid: item.pid });
+  };
+
+  getPosts = async (cursor = null) => {
+    const { user } = this.state;
+
+    this.setState({ fetching: true });
+
+    const response = await firebase.getThumbnails({ uid: user.uid }, cursor);
+
+    if (!response.error) {
+      const { posts } = this.state;
+
+      this.setState({
+        posts: cursor ? posts.concat(response.data) : response.data,
+        cursor: response.cursor,
+      });
+    } else {
+      console.log(response.error);
+      alert(response.error);
+    }
+
+    this.setState({ fetching: false });
+  };
+
+  onRefresh = async () => {
+    this.setState({ cursor: null });
+
+    await this.getPosts();
+  };
+
+  onEndReached = async () => {
+    const { cursor, loading } = this.state;
+
+    if (!loading && cursor) {
+      this.setState({ loading: true });
+      await this.getPosts(cursor);
+      this.setState({ loading: false });
+    }
   };
 
   render() {
     const { self, user, posts, fetching, loading } = this.state;
+
     return (
       <View style={styles.container}>
         <FlatList
@@ -103,12 +155,16 @@ export default class UserScreen extends React.Component {
           numColumns={3}
           data={posts}
           keyExtractor={item => item.key}
+          refreshControl={
+            <RefreshControl refreshing={fetching} onRefresh={this.onRefresh} />
+          }
+          onEndReachedThreshold={0.1}
+          onEndReached={this.onEndReached}
           ListHeaderComponent={() => (
             <View style={styles.header}>
               {!self && (
                 <Avatar uri={user.img} size={60} style={styles.avatar} />
               )}
-              } />
               {self && (
                 <TouchableOpacity onPress={this.onUserPress}>
                   <Avatar uri={user.img} size={60} style={styles.avatar} />
@@ -123,10 +179,11 @@ export default class UserScreen extends React.Component {
             if (viewableItemIndices.indexOf(index) === -1) {
               return <View style={styles.file} />;
             }
+
             return (
               <TouchableOpacity onPress={() => this.onThumbnailPress(item)}>
                 {item.type === 'photo' && (
-                  <Image uri={item.thumbnail} s tyle={styles.file} />
+                  <Image uri={item.thumbnail} style={styles.file} />
                 )}
                 {item.type === 'movie' && (
                   <Video
@@ -147,7 +204,7 @@ export default class UserScreen extends React.Component {
               </View>
             ) : null
           }
-        />{' '}
+        />
       </View>
     );
   }
