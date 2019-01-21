@@ -26,6 +26,7 @@
       "supportsTablet": true
     },
     "extra": {
+      "ga": "UA-132821865-1",
       "firebase": {
         "apiKey": "AIzaSyDIXOpXzKFhA8SdtcBxcl2Y_ktcR6ECjMo",
         "authDomain": "react-native-sns-app.firebaseapp.com",

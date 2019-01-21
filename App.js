@@ -10,7 +10,7 @@ import fonts from 'src/fonts';
 import images from 'src/images';
 import firebase from 'src/firebase';
 import Navigation from 'src';
-import Analytics from 'src/analytics';
+// import Analytics from 'src/analytics';
 
 /* Sentry init */
 // Sentry.config('https://xxxxxxxxxxxx@sentry.io/xxxxxxxxxx').install();
