@@ -2,18 +2,20 @@ import React from 'react';
 import { AppLoading, Constants, Asset, Font } from 'expo';
 
 /* node_modules */
-// import I18n from 'ex-react-native-i18n';
-// import Sentry from 'sentry-expo';
+import I18n from 'ex-react-native-i18n';
+import Sentry from 'sentry-expo';
 
 /* from app */
 import fonts from 'src/fonts';
 import images from 'src/images';
 import firebase from 'src/firebase';
 import Navigation from 'src';
-// import Analytics from 'src/analytics';
+import Analytics from 'src/analytics';
 
 /* Sentry init */
-// Sentry.config('https://xxxxxxxxxxxx@sentry.io/xxxxxxxxxx').install();
+Sentry.config(
+  'https://709cc6ce27d04fff9cfa123bdb9ef852@sentry.io/1375579'
+).install();
 
 export default class App extends React.Component {
   static defaultProps = {

@@ -35,6 +35,18 @@
         "storageBucket": "react-native-sns-app.appspot.com",
         "messagingSenderId": "44597503030"
       }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "Keisaku Sai",
+            "project": "Keisaku Sai",
+            "authToken": "8c89ad0896c84ae2a7dc72e5eb93c6ae615db8a2b0584f5c823bfbfc03f8ab48"
+          }
+        }
+      ]
     }
   }
 }
